@@ -10,13 +10,12 @@ import fetchMovies from '../../services/movieService';
 import type { Movie } from '../../types/movie';
 
 export default function App() {
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [movies, setMovies] = useState<Movie[]>([]);
   const [selectedMovieId, setSelectedMovieId] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [isError, setIsError] = useState(false);
 
-  const closeModal = () => setIsModalOpen(false);
+  const closeModal = () => setSelectedMovieId(null);
 
   const handleSubmit = async (query: string) => {
     try {
@@ -28,7 +27,6 @@ export default function App() {
         toast.error('No movies found for your request.');
       }
       setMovies(movies);
-      
     } catch {
       setIsError(true);
     } finally {
@@ -38,7 +36,6 @@ export default function App() {
 
   const handleSelect = (id: number) => {
     setSelectedMovieId(id);
-    setIsModalOpen(true);
   };
 
   const selectedMovie =
@@ -51,8 +48,8 @@ export default function App() {
       <Toaster />
       {isLoading && <Loader />}
       {isError && <ErrorMessage />}
-      {isMovies && !isError && <MovieGrid movies={movies} onSelect={handleSelect} />}
-      {isModalOpen && selectedMovie && <MovieModal onClose={closeModal} movie={selectedMovie} />}
+      {isMovies && !isError && !isLoading && <MovieGrid movies={movies} onSelect={handleSelect} />}
+      {selectedMovie && <MovieModal onClose={closeModal} movie={selectedMovie} />}
     </div>
   );
 }
